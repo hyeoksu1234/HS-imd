@@ -1,15 +1,15 @@
+const config = {
+  count: 80,
+  separation: 6,
+  width: 400,
+  speed: 0.0025,
+  warity: 0.04,
+};
 
+let lines = [];
+let time = 0;
 
-var x = 0;
-var y = 0;
-var stepSize = 5.0;
-
-var font = 'Georgia';
-var letters = 'jaewon3940@gmail.com ';
-var fontSizeMin = 3;
-var angleDistortion = 0.0;
-
-var counter = 0;
+const gaussianCurve = (x) => Math.exp(-(Math.pow(x / 15, 2) / 2)) * 100;
 
 function setup() {
   let boundingRects = document
@@ -17,55 +17,85 @@ function setup() {
     .getBoundingClientRect();
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
-  background(219, 231, 177);
-  cursor(CROSS);
 
-  x = mouseX;
-  y = mouseY;
+  background(0);
 
-  textFont(font);
-  textAlign(LEFT);
-  fill(127, 25, 0);
-}
-
-
-function draw() {
-  if (mouseIsPressed && mouseButton == LEFT) {
-    var d = dist(x, y, mouseX, mouseY);
-    textSize(fontSizeMin + d / 2);
-    var newLetter = letters.charAt(counter);
-    stepSize = textWidth(newLetter);
-
-    if (d > stepSize) {
-      var angle = atan2(mouseY - y, mouseX - x);
-
-      push();
-      translate(x, y);
-      rotate(angle + random(angleDistortion));
-      text(newLetter, 0, 0);
-      pop();
-
-      counter++;
-      if (counter >= letters.length) counter = 0;
-
-      x = x + cos(angle) * stepSize;
-      y = y + sin(angle) * stepSize;
-    }
+  for (let i = 0; i < config.count; i++) {
+    lines.push(new DivisionLine(i * config.separation));
   }
 }
 
-function mousePressed() {
-  x = mouseX;
-  y = mouseY;
+let timeStamp = Date.now();
+function draw() {
+  background(0);
+  const dt = Date.now() - timeStamp;
+  //center it
+  translate(
+    width / 2 - config.width / 2,
+    height / 1.8 - (config.count * config.separation) / 2
+  );
+
+  for (const line of lines) {
+    line.draw();
+  }
+
+  time += config.speed * dt * 0.057;
+  timeStamp = Date.now();
 }
 
-function keyReleased() {
-  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
-  if (keyCode == DELETE || keyCode == BACKSPACE) background(255);
+class DivisionLine {
+  baseline;
+  width = config.width;
+  sampling = 3;
+  timeOffset = 0;
+  patternOffset = random(300);
+
+  constructor(baseline) {
+    this.baseline = baseline;
+  }
+
+  draw() {
+    stroke("rgb(0,255,0)");
+    strokeWeight(2);
+    fill(0);
+
+    let noiseOffset = this.patternOffset;
+    const steps = this.width / this.sampling;
+
+    beginShape();
+    for (let i = 0; i < steps; i++) {
+      const noiseValue = noise(noiseOffset, time);
+      const gaussValue = gaussianCurve(i - steps / 2) + 10;
+
+      const value = abs(map(noiseValue, 0, 1, -gaussValue, gaussValue));
+
+      vertex(this.sampling * i, this.baseline - value);
+      noiseOffset += config.warity;
+    }
+    endShape();
+  }
 }
 
-function keyPressed() {
-  // angleDistortion ctrls arrowkeys up/down
-  if (keyCode == UP_ARROW) angleDistortion += 0.1;
-  if (keyCode == DOWN_ARROW) angleDistortion -= 0.1;
+setTimeout(function () {
+  console.log(dots[20]);
+}, 5000);
+
+document.addEventListener("mousemove", reDraw);
+
+function reDraw(e) {
+  clear();
+  beginShape();
+
+  for (var i = 0; i < dots.length; i++) {
+    if (
+      Math.sqrt(
+        (e.pageX - dots[i].x) * (e.pageX - dots[i].x) +
+          (e.pageY - dots[i].y) * (e.pageY - dots[i].y)
+      ) < 45
+    ) {
+      stroke(dots[i].dotColour);
+      line(dots[i].x, dots[i].y, e.pageX, e.pageY);
+    }
+  }
+  endShape();
 }

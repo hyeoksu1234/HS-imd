@@ -1,0 +1,99 @@
+body {
+  background-color: #000000;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html,
+html *,
+body,
+body * {
+  cursor: none;
+}
+
+.work-item-container-wrapper {
+  display: flex;
+  width: 100%;
+  height: 90vh;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.work-item-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.work-item-inner {
+  overflow: hidden;
+  width: 670px;
+  height: 379px;
+}
+
+.rgbize {
+  position: relative;
+}
+
+.rgbize img {
+  position: absolute;
+  display: block;
+}
+
+.rgb-first {
+  opacity: 0;
+  /*   filter: contrast(1.2); */
+  filter: hue-rotate(230deg);
+  transition: 0.5s ease all;
+  will-change: opacity, filter;
+}
+
+.rgb-second {
+  opacity: 0;
+  /*   filter: sepia(80%); */
+  filter: saturate(164%);
+  transition: 0.7s ease all;
+  will-change: opacity, filter;
+}
+
+.rgbize:hover .rgb-first {
+  opacity: 0.8;
+  will-change: opacity;
+}
+
+.rgbize:hover .rgb-second {
+  opacity: 0.6;
+  will-change: opacity;
+}
+
+.cursor-dot,
+.cursor-dot-outline {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  z-index: 999;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #dedede;
+}
+
+.cursor-dot-outline {
+  width: 40px;
+  height: 40px;
+  background-color: #181818;
+}

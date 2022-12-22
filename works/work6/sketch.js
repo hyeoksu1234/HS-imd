@@ -1,17 +1,9 @@
-
-var joinedText;
-var alphabet;
-var drawLetters = [];
-
-var posX;
-var posY;
-
-var drawLines = false;
-var drawText = true;
-
-function preload() {
-  joinedText = loadStrings('6work6.txt');
-}
+var rows = 0,
+  cols = 0,
+  cellSize = 27;
+var sz = 0,
+  theta = 0,
+  edge = 50;
 
 function setup() {
   let boundingRects = document
@@ -20,92 +12,31 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-
-  textFont('monospace', 20);
-  fill(255, 227, 246);
-
-  joinedText = joinedText.join(' ');
-  alphabet = getUniqCharacters();
-  for (var i = 0; i < alphabet.length; i++) {
-    drawLetters[i] = true;
-  }
+  rows = (width - 2 * edge) / cellSize;
+  cols = (height - 2 * edge) / cellSize;
 }
-
 
 function draw() {
-  background(38, 40, 33);
-
-  posX = 20;
-  posY = 40;
-  var oldX = 0;
-  var oldY = 0;
-
-  // go through all characters in the text to draw them
-  for (var i = 0; i < joinedText.length; i++) {
-    // again, find the index of the current letter in the character set
-    var upperCaseChar = joinedText.charAt(i).toUpperCase();
-    var index = alphabet.indexOf(upperCaseChar);
-    if (index < 0) continue;
-
-    var sortY = index * 20 + 40;
-    var m = map(mouseX, 50, width - 50, 0, 1);
-    m = constrain(m, 0, 1);
-    var interY = lerp(posY, sortY, m);
-
-    if (drawLetters[index]) {
-      if (drawLines) {
-        if (oldX != 0 && oldY != 0) {
-          stroke(181, 157, 0, 100);
-          line(oldX, oldY, posX, interY);
-        }
-        oldX = posX;
-        oldY = interY;
-      }
-
-      if (drawText) {
-        noStroke();
-        text(joinedText.charAt(i), posX, interY);
-      }
-    } else {
-      oldX = 0;
-      oldY = 0;
-    }
-
-    posX += textWidth(joinedText.charAt(i));
-    if (posX >= width - 200 && upperCaseChar == ' ') {
-      posY += 30;
-      posX = 20;
+  background(0);
+  noStroke();
+  for (var i = 0; i <= rows; i++) {
+    for (var j = 0; j < cols; j++) {
+      var offSet = PI + (PI / rows) * i + (PI / cols) * j;
+      var x = (i + 0.5) * cellSize;
+      var y = (j + 0.5) * cellSize;
+      var dx = mouseX - x;
+      var dy = mouseY - y;
+      noStroke();
+      fill("rgb(0,255,0)");
+      var r = atan2(dy, dx);
+      var arcSize = map(sin(theta / 4 + offSet), -1, 1, radians(30), PI);
+      sz = cellSize * 0.9;
+      push();
+      translate(x + edge, y + edge);
+      rotate(r + theta);
+      arc(0, 0, sz, sz, 0, arcSize);
+      pop();
     }
   }
-}
-
-function getUniqCharacters() {
-  var charsArray = joinedText.toUpperCase().split('');
-  var uniqCharsArray = charsArray.filter(function (char, index) {
-    return charsArray.indexOf(char) == index;
-  }).sort();
-  return uniqCharsArray.join('');
-}
-
-function keyReleased() {
-  if (keyCode == CONTROL) saveCanvas(gd.timestamp(), 'png');
-
-  if (key == '1') drawLines = !drawLines;
-  if (key == '2') drawText = !drawText;
-  if (key == '3') {
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = false;
-    }
-  }
-  if (key == '4') {
-    drawText = true;
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = true;
-    }
-  }
-
-  var index = alphabet.indexOf(key.toUpperCase());
-  if (index >= 0) {
-    drawLetters[index] = !drawLetters[index];
-  }
+  theta += 0.02;
 }

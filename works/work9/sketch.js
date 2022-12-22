@@ -1,10 +1,5 @@
-
-
-var tileCount = 20;
-var actRandomSeed = 0;
-
-var circleAlpha = 130;
-var circleColor;
+var izzms = [],
+  sizer = 10;
 
 function setup() {
   let boundingRects = document
@@ -13,38 +8,33 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-  noFill();
-  circleColor = color(35, 82, 36, circleAlpha);
-}
+  var prox = 20,
+    row = ceil(width / prox) + 1,
+    column = ceil(height / prox) + 1;
 
-function draw() {
-  translate(width / tileCount / 2, height / tileCount / 2);
-
-  background(65, 255, 181);
-
-  randomSeed(actRandomSeed);
-
-  stroke(circleColor);
-  strokeWeight(mouseY / 60);
-
-  for (var gridY = 0; gridY < tileCount; gridY++) {
-    for (var gridX = 0; gridX < tileCount; gridX++) {
-
-      var posX = width / tileCount * gridX;
-      var posY = height / tileCount * gridY;
-
-      var shiftX = random(-mouseX, mouseX) / 20;
-      var shiftY = random(-mouseX, mouseX) / 20;
-
-      ellipse(posX + shiftX, posY + shiftY, mouseY / 15, mouseY / 15);
+  for (var j = 0; j < column; j++) {
+    for (var i = 0; i < row; i++) {
+      izzms.push(new p5.Vector(prox * i, prox * j));
     }
   }
 }
 
-function mousePressed() {
-  actRandomSeed = random(100000);
+function draw() {
+  background(0);
+  noFill();
+  stroke("rgb(0,255,0)");
+  strokeWeight(15);
+  for (var i = izzms.length - 1; i >= 0; i--) {
+    var h = calcVec(izzms[i].x - mouseX, izzms[i].y - mouseY);
+    line(
+      izzms[i].x,
+      izzms[i].y,
+      izzms[i].x + sizer * cos(h.heading()),
+      izzms[i].y + sizer * sin(h.heading())
+    );
+  }
 }
 
-function keyReleased() {
-  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
+function calcVec(x, y) {
+  return new p5.Vector(y - x, -x - y);
 }

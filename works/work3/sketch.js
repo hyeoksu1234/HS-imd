@@ -1,15 +1,9 @@
-
-
-var x = 0;
-var y = 0;
-var stepSize = 5.0;
-
-var font = 'Georgia';
-var letters = 'Jeong Jae Won ';
-var fontSizeMin = 3;
-var angleDistortion = 0.0;
-
-var counter = 0;
+var spacing = 30; // Distance between each horizontal and vertical location
+var theta = 0.0; // Start angle at 0
+var amplitude = 15; // default height of wave
+var period = 200.0; // How many pixels before the wave repeats
+var dx; // Value for incrementing x
+var dots = []; // Using an array to store height values and size for each dot
 
 function setup() {
   let boundingRects = document
@@ -18,54 +12,61 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-  background(176, 188, 232);
-  cursor(CROSS);
-
-  x = mouseX;
-  y = mouseY;
-
-  textFont(font);
-  textAlign(LEFT);
-  fill(117, 35, 130);
+  dx = (TWO_PI / period) * spacing;
+  dots = new Array(15);
 }
 
 function draw() {
-  if (mouseIsPressed && mouseButton == LEFT) {
-    var d = dist(x, y, mouseX, mouseY);
-    textSize(fontSizeMin + d / 2);
-    var newLetter = letters.charAt(counter);
-    stepSize = textWidth(newLetter);
+  amplitude = map(mouseY, 0, windowHeight, 15, 75);
+  background(0);
+  calcWave();
+  renderWave();
+}
 
-    if (d > stepSize) {
-      var angle = atan2(mouseY - y, mouseX - x);
+function calcWave() {
+  // Increment theta (try different values for
+  // 'angular velocity' here)
+  theta += 0.05;
 
-      push();
-      translate(x, y);
-      rotate(angle + random(angleDistortion));
-      text(newLetter, 0, 0);
-      pop();
+  // For every x value, calculate a y value with sine function
+  var x = theta;
+  for (var i = 0; i < dots.length; i++) {
+    var dot = {};
+    dot.yvalue = sin(x) * amplitude;
+    dot.size = 16 * cos(x);
+    x += dx;
+    dots[i] = dot;
+  }
+}
 
-      counter++;
-      if (counter >= letters.length) counter = 0;
+function renderWave() {
+  noStroke();
 
-      x = x + cos(angle) * stepSize;
-      y = y + sin(angle) * stepSize;
+  // place the wave at the center
+  translate(
+    (width - (dots.length - 1) * spacing) / 2,
+    (height - 9 * spacing) / 2
+  );
+
+  for (var x = 0; x < dots.length; x++) {
+    for (var y = 0; y < 10; y++) {
+      dots[x].hue = map(x * spacing, 0, windowWidth, 0, 255);
+      fill("rgb(0,255,0)");
+      ellipse(
+        x * spacing,
+        dots[x].yvalue + y * spacing,
+        dots[x].size,
+        dots[x].size
+      );
     }
   }
 }
 
-function mousePressed() {
-  x = mouseX;
-  y = mouseY;
-}
+function windowResized() {
+  // this function executes everytime the window size changes
 
-function keyReleased() {
-  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
-  if (keyCode == DELETE || keyCode == BACKSPACE) background(255);
-}
-
-function keyPressed() {
-  // angleDistortion ctrls arrowkeys up/down
-  if (keyCode == UP_ARROW) angleDistortion += 0.1;
-  if (keyCode == DOWN_ARROW) angleDistortion -= 0.1;
+  // set the sketch width and height to the windowWidth and windowHeight. This gets rid of the scroll bars.
+  resizeCanvas(windowWidth, windowHeight);
+  // set background to gray
+  background(50);
 }

@@ -1,10 +1,14 @@
+var CIRCLE_W = 20;
+var ACTUAL_W = CIRCLE_W * 0.72;
+var MIN_W = 0;
+var CIRCLE_DIST = CIRCLE_W / 2;
 
+var COLS = innerWidth / CIRCLE_DIST + 1;
+var ROWS = innerHeight / CIRCLE_DIST + 1;
+var GREATER = Math.max(innerWidth, innerHeight);
 
-var tileCount = 20;
-var actRandomSeed = 0;
-
-var circleAlpha = 130;
-var circleColor;
+var dots = [];
+var beacon;
 
 function setup() {
   let boundingRects = document
@@ -13,38 +17,51 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-  noFill();
-  circleColor = color(98, 21, 21, circleAlpha);
+  noStroke();
+
+  for (let ci = 0; ci < COLS; ++ci)
+    for (let ri = 0; ri < ROWS; ++ri) {
+      let dot = new Dot(ci * CIRCLE_DIST, ri * CIRCLE_DIST);
+
+      dots.push(dot);
+    }
 }
 
 function draw() {
-  translate(width / tileCount / 2, height / tileCount / 2);
+  background(0);
+  beacon = new p5.Vector(mouseX || this.touchX, mouseY || this.touchY);
 
-  background(255, 118, 65);
+  fill("rgb(0,255,0)");
+  dots.forEach(function (dot) {
+    dot.render();
+  });
+}
 
-  randomSeed(actRandomSeed);
+var Dot = function (posX, posY) {
+  this.position = new p5.Vector(posX, posY);
+};
 
-  stroke(circleColor);
-  strokeWeight(mouseY / 60);
+Dot.prototype = {
+  render: function () {
+    var w = this.calcWidth();
+    ellipse(this.position.x, this.position.y, w, w);
+  },
 
-  for (var gridY = 0; gridY < tileCount; gridY++) {
-    for (var gridX = 0; gridX < tileCount; gridX++) {
+  calcWidth: function () {
+    var delta = Math.max(p5.Vector.dist(beacon, this.position), 0);
 
-      var posX = width / tileCount * gridX;
-      var posY = height / tileCount * gridY;
+    delta *= map(
+      noise(this.position.x, this.position.y, frameCount),
+      0,
+      1,
+      0.7,
+      1.2
+    );
 
-      var shiftX = random(-mouseX, mouseX) / 20;
-      var shiftY = random(-mouseX, mouseX) / 20;
-
-      ellipse(posX + shiftX, posY + shiftY, mouseY / 15, mouseY / 15);
+    if (delta > GREATER / 2) {
+      delta = GREATER / 2;
     }
-  }
-}
 
-function mousePressed() {
-  actRandomSeed = random(100000);
-}
-
-function keyReleased() {
-  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
-}
+    return map(delta, 0, GREATER / 2, ACTUAL_W, MIN_W);
+  },
+};
