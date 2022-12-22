@@ -1,7 +1,7 @@
-var rows = 0,
+let rows = 0,
   cols = 0,
   cellSize = 27;
-var sz = 0,
+let sz = 0,
   theta = 0,
   edge = 50;
 
@@ -19,17 +19,17 @@ function setup() {
 function draw() {
   background(0);
   noStroke();
-  for (var i = 0; i <= rows; i++) {
-    for (var j = 0; j < cols; j++) {
-      var offSet = PI + (PI / rows) * i + (PI / cols) * j;
-      var x = (i + 0.5) * cellSize;
-      var y = (j + 0.5) * cellSize;
-      var dx = mouseX - x;
-      var dy = mouseY - y;
+  for (let i = 0; i <= rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      let offSet = PI + (PI / rows) * i + (PI / cols) * j;
+      let x = (i + 0.5) * cellSize;
+      let y = (j + 0.5) * cellSize;
+      let dx = mouseX - x;
+      let dy = mouseY - y;
       noStroke();
       fill("rgb(0,255,0)");
-      var r = atan2(dy, dx);
-      var arcSize = map(sin(theta / 4 + offSet), -1, 1, radians(30), PI);
+      let r = atan2(dy, dx);
+      let arcSize = map(sin(theta / 4 + offSet), -1, 1, radians(30), PI);
       sz = cellSize * 0.9;
       push();
       translate(x + edge, y + edge);

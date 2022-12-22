@@ -86,7 +86,7 @@ function reDraw(e) {
   clear();
   beginShape();
 
-  for (var i = 0; i < dots.length; i++) {
+  for (let i = 0; i < dots.length; i++) {
     if (
       Math.sqrt(
         (e.pageX - dots[i].x) * (e.pageX - dots[i].x) +

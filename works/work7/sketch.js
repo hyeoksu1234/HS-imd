@@ -90,8 +90,8 @@ function centerSymbol() {
 
 function symbolsAtEdges() {
   if (random(1) > r) ellipse(0, 0, sz, sz);
-  var unit3 = unit * 0.35;
-  for (var i = 0; i < 4; i++) {
+  let unit3 = unit * 0.35;
+  for (let i = 0; i < 4; i++) {
     rotate(i * HALF_PI);
     if (random(1) > r + 0.3) {
       if (random(1) > r) {
@@ -111,8 +111,8 @@ function initStuff() {
   background(bg);
   strokeWeight(3);
   stroke("rgb(0,255,0)");
-  for (var x = outerCell / 2; x < width; x += outerCell) {
-    for (var y = outerCell / 2; y < height; y += outerCell) {
+  for (let x = outerCell / 2; x < width; x += outerCell) {
+    for (let y = outerCell / 2; y < height; y += outerCell) {
       drawPatternA(x, y);
     }
   }

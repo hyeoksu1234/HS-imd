@@ -1,8 +1,8 @@
-var count = 0;
-var tileCountX = 6;
-var tileCountY = 6;
+let count = 0;
+let tileCountX = 6;
+let tileCountY = 6;
 
-var drawMode = 1;
+let drawMode = 1;
 
 function setup() {
   let boundingRects = document
@@ -20,15 +20,15 @@ function draw() {
   background(0);
 
   count = mouseX / 20 + 5;
-  var para = min(height, mouseY) / height - 0.5;
+  let para = min(height, mouseY) / height - 0.5;
 
-  var tileWidth = width / tileCountX;
-  var tileHeight = height / tileCountY;
+  let tileWidth = width / tileCountX;
+  let tileHeight = height / tileCountY;
 
-  for (var gridY = 0; gridY <= tileCountY; gridY++) {
-    for (var gridX = 0; gridX <= tileCountX; gridX++) {
-      var posX = tileWidth * gridX + tileWidth / 2;
-      var posY = tileHeight * gridY + tileHeight / 2;
+  for (let gridY = 0; gridY <= tileCountY; gridY++) {
+    for (let gridX = 0; gridX <= tileCountX; gridX++) {
+      let posX = tileWidth * gridX + tileWidth / 2;
+      let posY = tileHeight * gridY + tileHeight / 2;
 
       push();
       translate(posX, posY);
@@ -37,7 +37,7 @@ function draw() {
       switch (drawMode) {
         case 1:
           translate(-tileWidth / 2, -tileHeight / 2);
-          for (var i = 0; i < count; i++) {
+          for (let i = 0; i < count; i++) {
             line(
               0,
               (para + 0.5) * tileHeight,
@@ -53,7 +53,7 @@ function draw() {
           }
           break;
         case 2:
-          for (var i = 0; i <= count; i++) {
+          for (let i = 0; i <= count; i++) {
             line(
               para * tileWidth,
               para * tileHeight,
@@ -81,7 +81,7 @@ function draw() {
           }
           break;
         case 3:
-          for (var i = 0; i <= count; i++) {
+          for (let i = 0; i <= count; i++) {
             line(
               0,
               para * tileHeight,

@@ -1,14 +1,14 @@
-var CIRCLE_W = 20;
-var ACTUAL_W = CIRCLE_W * 0.72;
-var MIN_W = 0;
-var CIRCLE_DIST = CIRCLE_W / 2;
+let CIRCLE_W = 20;
+let ACTUAL_W = CIRCLE_W * 0.72;
+let MIN_W = 0;
+let CIRCLE_DIST = CIRCLE_W / 2;
 
-var COLS = innerWidth / CIRCLE_DIST + 1;
-var ROWS = innerHeight / CIRCLE_DIST + 1;
-var GREATER = Math.max(innerWidth, innerHeight);
+let COLS = innerWidth / CIRCLE_DIST + 1;
+let ROWS = innerHeight / CIRCLE_DIST + 1;
+let GREATER = Math.max(innerWidth, innerHeight);
 
-var dots = [];
-var beacon;
+let dots = [];
+let beacon;
 
 function setup() {
   let boundingRects = document
@@ -37,18 +37,18 @@ function draw() {
   });
 }
 
-var Dot = function (posX, posY) {
+let Dot = function (posX, posY) {
   this.position = new p5.Vector(posX, posY);
 };
 
 Dot.prototype = {
   render: function () {
-    var w = this.calcWidth();
+    let w = this.calcWidth();
     ellipse(this.position.x, this.position.y, w, w);
   },
 
   calcWidth: function () {
-    var delta = Math.max(p5.Vector.dist(beacon, this.position), 0);
+    let delta = Math.max(p5.Vector.dist(beacon, this.position), 0);
 
     delta *= map(
       noise(this.position.x, this.position.y, frameCount),

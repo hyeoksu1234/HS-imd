@@ -1,9 +1,9 @@
-var spacing = 30; // Distance between each horizontal and vertical location
-var theta = 0.0; // Start angle at 0
-var amplitude = 15; // default height of wave
-var period = 200.0; // How many pixels before the wave repeats
-var dx; // Value for incrementing x
-var dots = []; // Using an array to store height values and size for each dot
+let spacing = 30; // Distance between each horizontal and vertical location
+let theta = 0.0; // Start angle at 0
+let amplitude = 15; // default height of wave
+let period = 200.0; // How many pixels before the wave repeats
+let dx; // Value for incrementing x
+let dots = []; // Using an array to store height values and size for each dot
 
 function setup() {
   let boundingRects = document
@@ -29,9 +29,9 @@ function calcWave() {
   theta += 0.05;
 
   // For every x value, calculate a y value with sine function
-  var x = theta;
-  for (var i = 0; i < dots.length; i++) {
-    var dot = {};
+  let x = theta;
+  for (let i = 0; i < dots.length; i++) {
+    let dot = {};
     dot.yvalue = sin(x) * amplitude;
     dot.size = 16 * cos(x);
     x += dx;
@@ -48,8 +48,8 @@ function renderWave() {
     (height - 9 * spacing) / 2
   );
 
-  for (var x = 0; x < dots.length; x++) {
-    for (var y = 0; y < 10; y++) {
+  for (let x = 0; x < dots.length; x++) {
+    for (let y = 0; y < 10; y++) {
       dots[x].hue = map(x * spacing, 0, windowWidth, 0, 255);
       fill("rgb(0,255,0)");
       ellipse(

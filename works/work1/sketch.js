@@ -16,14 +16,14 @@ function draw() {
     push();
     translate(width / 2, height / 2);
 
-    var circleResolution = int(map(mouseY + 100, 0, height, 2, 10));
-    var radius = mouseX - width / 2;
-    var angle = TAU / circleResolution;
+    let circleResolution = int(map(mouseY + 100, 0, height, 2, 10));
+    let radius = mouseX - width / 2;
+    let angle = TAU / circleResolution;
 
     beginShape();
-    for (var i = 0; i <= circleResolution; i++) {
-      var x = cos(angle * i) * radius;
-      var y = sin(angle * i) * radius;
+    for (let i = 0; i <= circleResolution; i++) {
+      let x = cos(angle * i) * radius;
+      let y = sin(angle * i) * radius;
       vertex(x, y);
     }
     endShape();

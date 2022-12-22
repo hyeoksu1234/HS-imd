@@ -1,4 +1,4 @@
-var izzms = [],
+let izzms = [],
   sizer = 10;
 
 function setup() {
@@ -8,12 +8,12 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-  var prox = 20,
+  let prox = 20,
     row = ceil(width / prox) + 1,
     column = ceil(height / prox) + 1;
 
-  for (var j = 0; j < column; j++) {
-    for (var i = 0; i < row; i++) {
+  for (let j = 0; j < column; j++) {
+    for (let i = 0; i < row; i++) {
       izzms.push(new p5.Vector(prox * i, prox * j));
     }
   }
@@ -24,8 +24,8 @@ function draw() {
   noFill();
   stroke("rgb(0,255,0)");
   strokeWeight(15);
-  for (var i = izzms.length - 1; i >= 0; i--) {
-    var h = calcVec(izzms[i].x - mouseX, izzms[i].y - mouseY);
+  for (let i = izzms.length - 1; i >= 0; i--) {
+    let h = calcVec(izzms[i].x - mouseX, izzms[i].y - mouseY);
     line(
       izzms[i].x,
       izzms[i].y,
