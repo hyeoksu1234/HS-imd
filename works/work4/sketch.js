@@ -1,17 +1,8 @@
+var count = 0;
+var tileCountX = 6;
+var tileCountY = 6;
 
-var joinedText;
-var alphabet;
-var drawLetters = [];
-
-var posX;
-var posY;
-
-var drawLines = false;
-var drawText = true;
-
-function preload() {
-  joinedText = loadStrings('4work4.txt');
-}
+var drawMode = 1;
 
 function setup() {
   let boundingRects = document
@@ -20,92 +11,117 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-
-  textFont('monospace', 20);
-  fill(11, 80, 55);
-
-  joinedText = joinedText.join(' ');
-  alphabet = getUniqCharacters();
-  for (var i = 0; i < alphabet.length; i++) {
-    drawLetters[i] = true;
-  }
+  rectMode(CENTER);
+  noFill();
+  stroke("rgb(0,255,0)");
 }
-
 
 function draw() {
-  background(255, 220, 107);
+  background(0);
 
-  posX = 20;
-  posY = 40;
-  var oldX = 0;
-  var oldY = 0;
+  count = mouseX / 20 + 5;
+  var para = min(height, mouseY) / height - 0.5;
 
-  // go through all characters in the text to draw them
-  for (var i = 0; i < joinedText.length; i++) {
-    // again, find the index of the current letter in the character set
-    var upperCaseChar = joinedText.charAt(i).toUpperCase();
-    var index = alphabet.indexOf(upperCaseChar);
-    if (index < 0) continue;
+  var tileWidth = width / tileCountX;
+  var tileHeight = height / tileCountY;
 
-    var sortY = index * 20 + 40;
-    var m = map(mouseX, 50, width - 50, 0, 1);
-    m = constrain(m, 0, 1);
-    var interY = lerp(posY, sortY, m);
+  for (var gridY = 0; gridY <= tileCountY; gridY++) {
+    for (var gridX = 0; gridX <= tileCountX; gridX++) {
+      var posX = tileWidth * gridX + tileWidth / 2;
+      var posY = tileHeight * gridY + tileHeight / 2;
 
-    if (drawLetters[index]) {
-      if (drawLines) {
-        if (oldX != 0 && oldY != 0) {
-          stroke(181, 157, 0, 100);
-          line(oldX, oldY, posX, interY);
-        }
-        oldX = posX;
-        oldY = interY;
+      push();
+      translate(posX, posY);
+
+      // switch between modules
+      switch (drawMode) {
+        case 1:
+          translate(-tileWidth / 2, -tileHeight / 2);
+          for (var i = 0; i < count; i++) {
+            line(
+              0,
+              (para + 0.5) * tileHeight,
+              tileWidth,
+              (i * tileHeight) / count
+            );
+            line(
+              0,
+              (i * tileHeight) / count,
+              tileWidth,
+              tileHeight - (para + 0.5) * tileHeight
+            );
+          }
+          break;
+        case 2:
+          for (var i = 0; i <= count; i++) {
+            line(
+              para * tileWidth,
+              para * tileHeight,
+              tileWidth / 2,
+              (i / count - 0.5) * tileHeight
+            );
+            line(
+              para * tileWidth,
+              para * tileHeight,
+              -tileWidth / 2,
+              (i / count - 0.5) * tileHeight
+            );
+            line(
+              para * tileWidth,
+              para * tileHeight,
+              (i / count - 0.5) * tileWidth,
+              tileHeight / 2
+            );
+            line(
+              para * tileWidth,
+              para * tileHeight,
+              (i / count - 0.5) * tileWidth,
+              -tileHeight / 2
+            );
+          }
+          break;
+        case 3:
+          for (var i = 0; i <= count; i++) {
+            line(
+              0,
+              para * tileHeight,
+              tileWidth / 2,
+              (i / count - 0.5) * tileHeight
+            );
+            line(
+              0,
+              para * tileHeight,
+              -tileWidth / 2,
+              (i / count - 0.5) * tileHeight
+            );
+            line(
+              0,
+              para * tileHeight,
+              (i / count - 0.5) * tileWidth,
+              tileHeight / 2
+            );
+            line(
+              0,
+              para * tileHeight,
+              (i / count - 0.5) * tileWidth,
+              -tileHeight / 2
+            );
+          }
+          break;
       }
 
-      if (drawText) {
-        noStroke();
-        text(joinedText.charAt(i), posX, interY);
-      }
-    } else {
-      oldX = 0;
-      oldY = 0;
-    }
-
-    posX += textWidth(joinedText.charAt(i));
-    if (posX >= width - 200 && upperCaseChar == ' ') {
-      posY += 30;
-      posX = 20;
+      pop();
     }
   }
-}
-
-function getUniqCharacters() {
-  var charsArray = joinedText.toUpperCase().split('');
-  var uniqCharsArray = charsArray.filter(function (char, index) {
-    return charsArray.indexOf(char) == index;
-  }).sort();
-  return uniqCharsArray.join('');
 }
 
 function keyReleased() {
-  if (keyCode == CONTROL) saveCanvas(gd.timestamp(), 'png');
-
-  if (key == '1') drawLines = !drawLines;
-  if (key == '2') drawText = !drawText;
-  if (key == '3') {
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = false;
-    }
-  }
-  if (key == '4') {
-    drawText = true;
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = true;
-    }
-  }
-
-  var index = alphabet.indexOf(key.toUpperCase());
-  if (index >= 0) {
-    drawLetters[index] = !drawLetters[index];
-  }
+  if (key == "s" || key == "S") saveCanvas(gd.timestamp(), "png");
+  if (key == "1") drawMode = 1;
+  if (key == "2") drawMode = 2;
+  if (key == "3") drawMode = 3;
+  if (keyCode == DOWN_ARROW) tileCountY = max(tileCountY - 1, 1);
+  if (keyCode == UP_ARROW) tileCountY += 1;
+  if (keyCode == LEFT_ARROW) tileCountX = max(tileCountX - 1, 1);
+  if (keyCode == RIGHT_ARROW) tileCountX += 1;
 }
