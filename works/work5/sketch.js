@@ -1,112 +1,32 @@
-
-var joinedText;
-var alphabet;
-var drawLetters = [];
-
-var posX;
-var posY;
-
-var drawLines = false;
-var drawText = true;
-
-function preload() {
-  joinedText = loadStrings('5work5.txt');
-}
-
-
 function setup() {
   let boundingRects = document
     .getElementById("p5Canvas")
     .getBoundingClientRect();
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
-
-
-  textFont('monospace', 20);
-  fill(67, 0, 161);
-
-  joinedText = joinedText.join(' ');
-  alphabet = getUniqCharacters();
-  for (var i = 0; i < alphabet.length; i++) {
-    drawLetters[i] = true;
-  }
+  drawLetters[i] = true;
 }
 
+const handleMousePos = (e) => {
+  const CURSOR = document.querySelector("#mouse-cursor");
+  const HOVER = document.querySelectorAll(".cursor-hover");
+  const { pageX: posX, pageY: posY } = e;
 
-function draw() {
-  background(130, 255, 107);
+  const runMouseOver = () => {
+    CURSOR.style.transform = "scale(4)";
+    CURSOR.style.background = "green";
+  };
+  HOVER.forEach((hover) => hover.addEventListener("mouseenter", runMouseOver));
 
-  posX = 20;
-  posY = 40;
-  var oldX = 0;
-  var oldY = 0;
+  const runMouseLeave = () => {
+    CURSOR.style.transform = "";
+    CURSOR.style.background = "";
+  };
+  HOVER.forEach((hover) => hover.addEventListener("mouseleave", runMouseLeave));
 
-  // go through all characters in the text to draw them
-  for (var i = 0; i < joinedText.length; i++) {
-    // again, find the index of the current letter in the character set
-    var upperCaseChar = joinedText.charAt(i).toUpperCase();
-    var index = alphabet.indexOf(upperCaseChar);
-    if (index < 0) continue;
-
-    var sortY = index * 20 + 40;
-    var m = map(mouseX, 50, width - 50, 0, 1);
-    m = constrain(m, 0, 1);
-    var interY = lerp(posY, sortY, m);
-
-    if (drawLetters[index]) {
-      if (drawLines) {
-        if (oldX != 0 && oldY != 0) {
-          stroke(181, 157, 0, 100);
-          line(oldX, oldY, posX, interY);
-        }
-        oldX = posX;
-        oldY = interY;
-      }
-
-      if (drawText) {
-        noStroke();
-        text(joinedText.charAt(i), posX, interY);
-      }
-    } else {
-      oldX = 0;
-      oldY = 0;
-    }
-
-    posX += textWidth(joinedText.charAt(i));
-    if (posX >= width - 200 && upperCaseChar == ' ') {
-      posY += 30;
-      posX = 20;
-    }
-  }
-}
-
-function getUniqCharacters() {
-  var charsArray = joinedText.toUpperCase().split('');
-  var uniqCharsArray = charsArray.filter(function (char, index) {
-    return charsArray.indexOf(char) == index;
-  }).sort();
-  return uniqCharsArray.join('');
-}
-
-function keyReleased() {
-  if (keyCode == CONTROL) saveCanvas(gd.timestamp(), 'png');
-
-  if (key == '1') drawLines = !drawLines;
-  if (key == '2') drawText = !drawText;
-  if (key == '3') {
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = false;
-    }
-  }
-  if (key == '4') {
-    drawText = true;
-    for (var i = 0; i < alphabet.length; i++) {
-      drawLetters[i] = true;
-    }
-  }
-
-  var index = alphabet.indexOf(key.toUpperCase());
-  if (index >= 0) {
-    drawLetters[index] = !drawLetters[index];
-  }
-}
+  return (
+    (CURSOR.style.left = `${posX - 10}px`),
+    (CURSOR.style.top = `${posY - 10}px`)
+  );
+};
+document.addEventListener("mousemove", handleMousePos);

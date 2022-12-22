@@ -1,15 +1,18 @@
 
+var joinedText;
+var alphabet;
+var drawLetters = [];
 
-var x = 0;
-var y = 0;
-var stepSize = 5.0;
+var posX;
+var posY;
 
-var font = 'Georgia';
-var letters = '@jeongjaewon_';
-var fontSizeMin = 3;
-var angleDistortion = 0.0;
+var drawLines = false;
+var drawText = true;
 
-var counter = 0;
+function preload() {
+  joinedText = loadStrings('5work5.txt');
+}
+
 
 function setup() {
   let boundingRects = document
@@ -18,54 +21,92 @@ function setup() {
   let canvas = createCanvas(boundingRects.width, boundingRects.height);
   canvas.parent("p5Canvas");
 
-  background(34, 34, 34);
-  cursor(CROSS);
 
-  x = mouseX;
-  y = mouseY;
+  textFont('monospace', 20);
+  fill(67, 0, 161);
 
-  textFont(font);
-  textAlign(LEFT);
-  fill(107, 243, 255);
+  joinedText = joinedText.join(' ');
+  alphabet = getUniqCharacters();
+  for (var i = 0; i < alphabet.length; i++) {
+    drawLetters[i] = true;
+  }
 }
 
+
 function draw() {
-  if (mouseIsPressed && mouseButton == LEFT) {
-    var d = dist(x, y, mouseX, mouseY);
-    textSize(fontSizeMin + d / 2);
-    var newLetter = letters.charAt(counter);
-    stepSize = textWidth(newLetter);
+  background(130, 255, 107);
 
-    if (d > stepSize) {
-      var angle = atan2(mouseY - y, mouseX - x);
+  posX = 20;
+  posY = 40;
+  var oldX = 0;
+  var oldY = 0;
 
-      push();
-      translate(x, y);
-      rotate(angle + random(angleDistortion));
-      text(newLetter, 0, 0);
-      pop();
+  // go through all characters in the text to draw them
+  for (var i = 0; i < joinedText.length; i++) {
+    // again, find the index of the current letter in the character set
+    var upperCaseChar = joinedText.charAt(i).toUpperCase();
+    var index = alphabet.indexOf(upperCaseChar);
+    if (index < 0) continue;
 
-      counter++;
-      if (counter >= letters.length) counter = 0;
+    var sortY = index * 20 + 40;
+    var m = map(mouseX, 50, width - 50, 0, 1);
+    m = constrain(m, 0, 1);
+    var interY = lerp(posY, sortY, m);
 
-      x = x + cos(angle) * stepSize;
-      y = y + sin(angle) * stepSize;
+    if (drawLetters[index]) {
+      if (drawLines) {
+        if (oldX != 0 && oldY != 0) {
+          stroke(181, 157, 0, 100);
+          line(oldX, oldY, posX, interY);
+        }
+        oldX = posX;
+        oldY = interY;
+      }
+
+      if (drawText) {
+        noStroke();
+        text(joinedText.charAt(i), posX, interY);
+      }
+    } else {
+      oldX = 0;
+      oldY = 0;
+    }
+
+    posX += textWidth(joinedText.charAt(i));
+    if (posX >= width - 200 && upperCaseChar == ' ') {
+      posY += 30;
+      posX = 20;
     }
   }
 }
 
-function mousePressed() {
-  x = mouseX;
-  y = mouseY;
+function getUniqCharacters() {
+  var charsArray = joinedText.toUpperCase().split('');
+  var uniqCharsArray = charsArray.filter(function (char, index) {
+    return charsArray.indexOf(char) == index;
+  }).sort();
+  return uniqCharsArray.join('');
 }
 
 function keyReleased() {
-  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
-  if (keyCode == DELETE || keyCode == BACKSPACE) background(255);
-}
+  if (keyCode == CONTROL) saveCanvas(gd.timestamp(), 'png');
 
-function keyPressed() {
-  // angleDistortion ctrls arrowkeys up/down
-  if (keyCode == UP_ARROW) angleDistortion += 0.1;
-  if (keyCode == DOWN_ARROW) angleDistortion -= 0.1;
+  if (key == '1') drawLines = !drawLines;
+  if (key == '2') drawText = !drawText;
+  if (key == '3') {
+    for (var i = 0; i < alphabet.length; i++) {
+      drawLetters[i] = false;
+    }
+  }
+  if (key == '4') {
+    drawText = true;
+    for (var i = 0; i < alphabet.length; i++) {
+      drawLetters[i] = true;
+    }
+  }
+
+  var index = alphabet.indexOf(key.toUpperCase());
+  if (index >= 0) {
+    drawLetters[index] = !drawLetters[index];
+  }
 }
