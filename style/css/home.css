@@ -21,6 +21,15 @@
   overflow: hidden;
 }
 
+p {
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.0313rem;
+  margin-bottom: 0.25rem;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -30,8 +39,8 @@
 
 .grid_title {
   min-height: 1rem;
-  grid-column: 1/span 3;
-  grid-row: 1/span 1;
+  grid-column: 1 / span 3;
+  grid-row: 1 / span 1;
   margin-bottom: 0.5rem;
 }
 .grid_title h1 {
